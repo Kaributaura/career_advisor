@@ -47,7 +47,21 @@ def recommend_careers(subjects, interests, learning_style):
     if "Biology" in subjects and "Helping People" in interests:
         careers += ["Nurse", "Public Health Officer", "Medical Lab Technician"]
     if "Chemistry" in subjects and "Medicine" in interests:
-        careers += ["Pharmacist", "Biomedical Scientist"]
+        careers += ["Pharmacist", "Biomedical Scientist", "Medicinal Chemist"]
+
+    # Chemistry
+        # Chemistry-specific pathways
+    if "Chemistry" in subjects and "Technology" in interests:
+        careers += ["Computational Chemist", "Cheminformatics Analyst"]
+
+    if "Chemistry" in subjects and "Environment" in interests:
+        careers += ["Green Chemist", "Environmental Chemist", "Waste Management Expert"]
+
+    if "Chemistry" in subjects and "Engineering" in interests:
+        careers += ["Materials Scientist", "Battery Researcher", "Nanotechnologist"]
+
+    if "Chemistry" in subjects and "Business" in interests:
+        careers += ["Industrial Chemist", "Process Chemist", "Quality Control Analyst"]
 
     # Business & Finance
     if "Economics" in subjects and "Finance" in interests:
