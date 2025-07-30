@@ -1,70 +1,100 @@
 import streamlit as st
+import pandas as pd
 
+# Page config
 st.set_page_config(page_title="Smart Career Advisor", layout="centered")
 
 st.title("🎓 Smart Career Advisor")
-st.write("Helping students choose the right career based on their strengths and interests.")
+st.write("🔍 Suggesting careers based on your strengths, interests, and market demand.")
 
-# --- User Inputs ---
-name = st.text_input("Student Name")
-subjects = st.multiselect(
-    "Which subjects are you strong in?",
-    ["Mathematics", "English", "Biology", "Chemistry", "Physics", "Government", "Literature", "Economics", "Geography", "Computer Science"]
-)
+# --- Input Section ---
+name = st.text_input("👤 Enter your name")
 
-interests = st.multiselect(
-    "What are your interests?",
-    ["Technology", "Helping People", "Creative Arts", "Business", "Law and Politics", "Nature & Environment", "Medicine", "Problem Solving"]
-)
+subjects = st.multiselect("📘 What subjects are you good at?", [
+    "Mathematics", "English", "Biology", "Chemistry", "Physics",
+    "Economics", "Literature", "Government", "Geography",
+    "Computer Science", "Agriculture", "Fine Arts", "History", "Commerce"
+])
 
-learning_style = st.radio(
-    "What is your preferred learning style?",
-    ["Practical", "Theoretical", "Visual", "Hands-on"]
-)
+interests = st.multiselect("💡 What are your interests?", [
+    "Technology", "Medicine", "Environment", "Business", "Politics & Law",
+    "Creative Arts", "Teaching", "Helping People", "Data & Analytics",
+    "Finance", "Writing", "Engineering", "Security"
+])
 
-# --- Career Logic ---
-def recommend_careers(subjects, interests):
-    recommendations = []
+learning_style = st.radio("🎓 Preferred Learning Style", ["Practical", "Theoretical", "Hands-on", "Visual"])
 
+# --- Optional Trend Awareness ---
+try:
+    trend_df = pd.read_csv("career_trends.csv")
+    trend_scores = dict(zip(trend_df["career"], trend_df["demand_score"]))
+except:
+    trend_scores = {}
+
+# --- Recommendation Engine ---
+def recommend_careers(subjects, interests, learning_style):
+    careers = []
+
+    # Tech Fields
     if "Mathematics" in subjects and "Technology" in interests:
-        recommendations.append("Software Engineer")
-        recommendations.append("Data Scientist")
+        careers += ["Software Engineer", "Data Scientist", "AI/ML Engineer"]
+    if "Computer Science" in subjects and "Security" in interests:
+        careers += ["Cybersecurity Analyst", "Network Administrator"]
+    if "Mathematics" in subjects and "Engineering" in interests:
+        careers += ["Mechanical Engineer", "Electrical Engineer"]
 
+    # Medical & Health Fields
     if "Biology" in subjects and "Helping People" in interests:
-        recommendations.append("Nurse")
-        recommendations.append("Public Health Officer")
+        careers += ["Nurse", "Public Health Officer", "Medical Lab Technician"]
+    if "Chemistry" in subjects and "Medicine" in interests:
+        careers += ["Pharmacist", "Biomedical Scientist"]
 
-    if "Literature" in subjects and "Law and Politics" in interests:
-        recommendations.append("Lawyer")
-        recommendations.append("Public Policy Analyst")
+    # Business & Finance
+    if "Economics" in subjects and "Finance" in interests:
+        careers += ["Accountant", "Investment Analyst"]
+    if "Commerce" in subjects and "Business" in interests:
+        careers += ["Entrepreneur", "Business Analyst", "Sales Manager"]
 
-    if "Economics" in subjects and "Business" in interests:
-        recommendations.append("Entrepreneur")
-        recommendations.append("Accountant")
+    # Law & Politics
+    if "Government" in subjects and "Politics & Law" in interests:
+        careers += ["Lawyer", "Public Policy Analyst", "Civil Servant"]
 
-    if "Chemistry" in subjects and "Nature & Environment" in interests:
-        recommendations.append("Environmental Scientist")
-        recommendations.append("Chemical Engineer")
+    # Arts & Humanities
+    if "Literature" in subjects and "Writing" in interests:
+        careers += ["Journalist", "Author", "Editor"]
+    if "Fine Arts" in subjects and "Creative Arts" in interests:
+        careers += ["Graphic Designer", "Animator", "Fashion Designer"]
+    if "English" in subjects and "Teaching" in interests:
+        careers += ["Teacher", "Education Consultant"]
 
-    if "Computer Science" in subjects and "Problem Solving" in interests:
-        recommendations.append("AI/ML Engineer")
-        recommendations.append("Cybersecurity Analyst")
+    # Agriculture & Environment
+    if "Agriculture" in subjects and "Environment" in interests:
+        careers += ["Agronomist", "Environmental Scientist"]
+    if "Geography" in subjects and "Environment" in interests:
+        careers += ["Urban Planner", "Climate Researcher"]
 
-    if not recommendations:
-        recommendations.append("Education Counselor")
-        recommendations.append("General Career Advisor")
+    # General fallback careers
+    if not careers:
+        careers += ["Career Counselor", "General Education Officer"]
 
-    return recommendations
+    # Remove duplicates
+    return list(set(careers))
 
-# --- Output ---
-if st.button("Suggest Careers"):
-    if name == "" or not subjects or not interests:
-        st.warning("Please complete all fields.")
+# --- Output Section ---
+if st.button("🎯 Suggest Careers"):
+    if not name or not subjects or not interests:
+        st.warning("Please complete all fields to get recommendations.")
     else:
-        st.subheader(f"👤 Career Advice for {name}")
-        careers = recommend_careers(subjects, interests)
+        st.subheader(f"📌 Career Advice for {name}")
+        suggested = recommend_careers(subjects, interests, learning_style)
 
-        for i, career in enumerate(careers, 1):
-            st.markdown(f"**{i}. {career}**")
+        for i, career in enumerate(suggested, 1):
+            trend = trend_scores.get(career, 0)
+            if trend >= 8:
+                st.markdown(f"**{i}. {career} 🔥 (High Demand)**")
+            elif trend >= 5:
+                st.markdown(f"**{i}. {career} ⭐ (Growing Trend)**")
+            else:
+                st.markdown(f"**{i}. {career}**")
 
-        st.info("💡 Based on your strengths and interests, these careers are trending and suitable for you.")
+        st.success("✅ Based on your profile and learning style, these careers may suit you.")
