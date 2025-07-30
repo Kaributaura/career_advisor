@@ -4,34 +4,34 @@ import pandas as pd
 # Page config
 st.set_page_config(page_title="Smart Career Advisor", layout="centered")
 
-st.title("🎓 Smart Career Advisor")
-st.write("🔍 Suggesting careers based on your strengths, interests, and market demand.")
+st.title("AI-Powered Career Advisor")
+st.write("Suggesting careers based on your strengths, interests, and market demand.")
 
 # --- Input Section ---
-name = st.text_input("👤 Enter your name")
+name = st.text_input("Enter your name")
 
-subjects = st.multiselect("📘 What subjects are you good at?", [
+subjects = st.multiselect("What subject(s) are you good at?", [
     "Mathematics", "English", "Biology", "Chemistry", "Physics",
     "Economics", "Literature", "Government", "Geography",
     "Computer Science", "Agriculture", "Fine Arts", "History", "Commerce"
 ])
 
-interests = st.multiselect("💡 What are your interests?", [
+interests = st.multiselect("What are your interests?", [
     "Technology", "Medicine", "Environment", "Business", "Politics & Law",
     "Creative Arts", "Teaching", "Helping People", "Data & Analytics",
     "Finance", "Writing", "Engineering", "Security"
 ])
 
-learning_style = st.radio("🎓 Preferred Learning Style", ["Practical", "Theoretical", "Hands-on", "Visual"])
+learning_style = st.radio("Ypour Preferred Learning Style", ["Theoretical", "Practical", "Hands-on", "Visual"])
 
-# --- Optional Trend Awareness ---
+# --- Trend Awareness ---
 try:
     trend_df = pd.read_csv("career_trends.csv")
     trend_scores = dict(zip(trend_df["career"], trend_df["demand_score"]))
 except:
     trend_scores = {}
 
-# --- Recommendation Engine ---
+# --- Recommendation ---
 def recommend_careers(subjects, interests, learning_style):
     careers = []
 
@@ -50,7 +50,6 @@ def recommend_careers(subjects, interests, learning_style):
         careers += ["Pharmacist", "Biomedical Scientist", "Medicinal Chemist"]
 
     # Chemistry
-        # Chemistry-specific pathways
     if "Chemistry" in subjects and "Technology" in interests:
         careers += ["Computational Chemist", "Cheminformatics Analyst"]
 
@@ -95,20 +94,30 @@ def recommend_careers(subjects, interests, learning_style):
     return list(set(careers))
 
 # --- Output Section ---
-if st.button("🎯 Suggest Careers"):
+if st.button("Suggest Careers"):
     if not name or not subjects or not interests:
         st.warning("Please complete all fields to get recommendations.")
     else:
-        st.subheader(f"📌 Career Advice for {name}")
+        st.subheader(f"Career Advice for {name}")
         suggested = recommend_careers(subjects, interests, learning_style)
 
-        for i, career in enumerate(suggested, 1):
-            trend = trend_scores.get(career, 0)
-            if trend >= 8:
-                st.markdown(f"**{i}. {career} 🔥 (High Demand)**")
-            elif trend >= 5:
-                st.markdown(f"**{i}. {career} ⭐ (Growing Trend)**")
-            else:
-                st.markdown(f"**{i}. {career}**")
+        # Attach trend score
+        career_with_scores = []
+        for career in suggested:
+            score = trend_scores.get(career, 0)
+            career_with_scores.append((career, score))
 
-        st.success("✅ Based on your profile and learning style, these careers may suit you.")
+        # Sort by score descending
+        career_with_scores.sort(key=lambda x: x[1], reverse=True)
+
+        # Display
+        for i, (career, score) in enumerate(career_with_scores, 1):
+            if score >= 8:
+                tag = "🔥 (High Demand)"
+            elif score >= 5:
+                tag = "⭐ (Growing Trend)"
+            else:
+                tag = ""
+            st.markdown(f"**{i}. {career} {tag}**")
+
+        st.success("Based on your profile and learning style, these careers may suit you.")
