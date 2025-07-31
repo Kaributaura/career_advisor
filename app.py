@@ -1,13 +1,13 @@
 import streamlit as st
 import pandas as pd
 
-# Page config
-st.set_page_config(page_title="Smart Career Advisor", layout="centered")
+# Head
+st.set_page_config(page_title="Career Advisor", layout="centered")
 
-st.title("AI-Powered Career Advisor")
+st.title("AI-Powered Career Advisor", layout="centered")
 st.write("Suggesting careers based on your strengths, interests, and market demand.")
 
-# --- Input Section ---
+# Input
 name = st.text_input("Enter your name")
 
 subjects = st.multiselect("What subject(s) are you good at?", [
@@ -22,16 +22,16 @@ interests = st.multiselect("What are your interests?", [
     "Finance", "Writing", "Engineering", "Security"
 ])
 
-learning_style = st.radio("Ypour Preferred Learning Style", ["Theoretical", "Practical", "Hands-on", "Visual"])
+learning_style = st.radio("Your Preferred Learning Style", ["Theoretical", "Practical", "Hands-on", "Visual"])
 
-# --- Trend Awareness ---
+# Trend Awareness
 try:
     trend_df = pd.read_csv("career_trends.csv")
     trend_scores = dict(zip(trend_df["career"], trend_df["demand_score"]))
 except:
     trend_scores = {}
 
-# --- Recommendation ---
+# Career Recommendation
 def recommend_careers(subjects, interests, learning_style):
     careers = []
 
@@ -93,7 +93,7 @@ def recommend_careers(subjects, interests, learning_style):
     # Remove duplicates
     return list(set(careers))
 
-# --- Output Section ---
+# Output
 if st.button("Suggest Careers"):
     if not name or not subjects or not interests:
         st.warning("Please complete all fields to get recommendations.")
