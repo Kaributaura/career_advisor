@@ -4,7 +4,7 @@ import pandas as pd
 # Head
 st.set_page_config(page_title="Career Advisor", layout="centered")
 
-st.title("AI-Powered Career Advisor", layout="centered")
+st.title("AI-Powered Career Advisor")
 st.write("Suggesting careers based on your strengths, interests, and market demand.")
 
 # Input
